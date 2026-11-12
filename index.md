@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ivory</title>
 
-</head>
-<body>
 ## Company Profile
  
 Ivory is an innovative medical and consumer technology enterprise dedicated to eliminating preventable food waste and foodborne illnesses. 
@@ -30,5 +28,3 @@ The device replaces subjective sensory guesswork—such as visual appearance, sm
  
 Universal accessibility- Braille controls, audio feedback sensors, and sensory impairment solutions.
 Mobile application- Barcode/QR integration, smart shelf-life tracking, and consumer feedback.
-</body>
-</html>
