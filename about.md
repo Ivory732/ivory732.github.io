@@ -1,3 +1,5 @@
 layout: default title: About
-About Ivory
-This page tells visitors about Ivory.
+Home | About | Contact
+
+About
+Information about Ivory.
