@@ -1,3 +1,5 @@
 layout: default title: Contact
+Home | About | Contact
+
 Contact
-Email: Ivory@example.com
+Get in touch with us.
