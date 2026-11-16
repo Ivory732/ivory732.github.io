@@ -1,5 +1,8 @@
-## Company Profile
- 
+layout: default
+Ivory
+Welcome to the Ivory website.
+
+## Company Profile 
 Ivory is an innovative medical and consumer technology enterprise dedicated to eliminating preventable food waste and foodborne illnesses. 
 By pairing advanced molecular sensing with universal, inclusive product engineering, Ivory delivers reliable, objective freshness insights into everyday homes and professional institutions.
 
