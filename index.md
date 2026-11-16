@@ -1,4 +1,4 @@
-layout: default
+layout: default title: Home
 Ivory
 Welcome to the Ivory website.
 
