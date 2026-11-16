@@ -1,4 +1,6 @@
 layout: default title: Home
+Home | About | Contact
+
 Ivory
 Welcome to the Ivory website.
 
