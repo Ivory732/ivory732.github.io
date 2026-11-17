@@ -1,1 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ivory | TasteBud food freshness assessment</title>
+<meta name="description" content="Ivory builds TasteBud, a pocket-sized food freshness assessment tool with braille, tactile controls and audio feedback.">
+<meta name="theme-color" content="#0F2E23">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230F2E23'/><text x='50' y='70' font-size='64' text-anchor='middle' fill='%23F8F9FA' font-family='serif'>I</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#0F2E23; --alabaster:#F8F9FA; --slate:#4A607A; --charcoal:#1F2937;
+  --mist:#E8EDEA; --line:#cfd8d3;
+  --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --sans:'Manrope',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  --nav-h:72px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 12px)}
+body{margin:0;font-family:var(--sans);color:var(--charcoal);background:var(--alabaster);line-height:1.65;font-size:17px}
+img,svg{max-width:100%}
+h1,h2,h3{font-family:var(--serif);color:var(--forest);line-height:1.1;margin:0 0 .5em;font-weight:600}
+h1{font-size:clamp(2.8rem,7vw,5rem);letter-spacing:-.01em}
+h2{font-size:clamp(2rem,4.5vw,3rem)}
+h3{font-size:1.5rem}
+p{margin:0 0 1em;max-width:62ch}
+a{color:var(--slate)}
+:focus-visible{outline:3px solid var(--slate);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--forest);color:#fff;padding:.6rem 1rem;z-index:100;border-radius:6px}
+.skip:focus{left:8px}
+.wrap{width:min(1120px,100% - 2.5rem);margin-inline:auto}
+section{padding:clamp(4rem,9vw,7rem) 0}
 
+/* Navigation */
+.nav{position:sticky;top:0;z-index:50;height:var(--nav-h);background:rgba(248,249,250,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:100%}
+.brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--forest)}
+.brand svg{width:38px;height:38px}
+.menu{display:flex;gap:.25rem;list-style:none;margin:0;padding:0;align-items:center}
+.menu a{display:block;padding:.5rem .8rem;border-radius:8px;text-decoration:none;color:var(--charcoal);font-weight:500;font-size:.95rem}
+.menu a:hover{background:var(--mist)}
+.menu a[aria-current="true"]{color:var(--forest);box-shadow:inset 0 -2px 0 var(--forest);border-radius:8px 8px 0 0}
+.menu .cta{background:var(--forest);color:var(--alabaster);margin-left:.5rem}
+.menu .cta:hover{background:var(--charcoal)}
+.toggle{display:none;background:none;border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;cursor:pointer;color:var(--forest)}
+.toggle span{display:block;width:22px;height:2px;background:currentColor;margin:4px 0}
+@media (max-width:860px){
+  .toggle{display:block}
+  .menu{display:none;position:absolute;top:var(--nav-h);left:0;right:0;background:var(--alabaster);flex-direction:column;align-items:stretch;padding:1rem 1.25rem 1.5rem;border-bottom:1px solid var(--line)}
+  .menu.open{display:flex}
+  .menu .cta{margin:.5rem 0 0;text-align:center}
+}
+
+/* Hero */
+.hero{background:var(--forest);color:var(--alabaster);padding:clamp(3.5rem,8vw,6rem) 0}
+.hero h1{color:var(--alabaster)}
+.hero p{color:#d5e0da;font-size:1.15rem}
+.hero .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center}
+.btns{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem}
+.btn{display:inline-block;padding:.85rem 1.4rem;border-radius:10px;text-decoration:none;font-weight:700;border:2px solid transparent}
+.btn.primary{background:var(--alabaster);color:var(--forest)}
+.btn.primary:hover{background:#fff}
+.btn.ghost{border-color:#8fb0a2;color:var(--alabaster)}
+.btn.ghost:hover{background:rgba(255,255,255,.1)}
+.hero :focus-visible{outline-color:#fff}
+
+/* Live reading demo */
+.reader{background:var(--alabaster);color:var(--charcoal);border-radius:20px;padding:1.5rem;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.reader h2{font-size:1.1rem;font-family:var(--sans);font-weight:700;color:var(--slate);margin-bottom:1rem}
+.states{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.25rem}
+.states button{font:inherit;font-weight:700;font-size:.9rem;padding:.7rem .5rem;border-radius:10px;border:2px solid var(--line);background:#fff;color:var(--charcoal);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.readout{display:flex;gap:1rem;align-items:flex-start;min-height:128px}
+.icon{flex:none;width:64px;height:64px;border-radius:16px;background:var(--mist);display:grid;place-items:center}
+.icon svg{width:36px;height:36px}
+.readout strong{font-family:var(--serif);font-size:1.8rem;color:var(--forest);display:block;line-height:1.1}
+.readout p{margin:.3rem 0 0;font-size:.95rem}
+.hear{margin-top:.75rem;font:inherit;font-weight:700;font-size:.9rem;background:none;border:2px solid var(--slate);color:var(--slate);border-radius:10px;padding:.5rem .9rem;cursor:pointer}
+.hear:hover{background:var(--slate);color:#fff}
+.note{font-size:.8rem;color:var(--slate);margin:1rem 0 0}
+@media (max-width:860px){.hero .grid{grid-template-columns:1fr}}
+
+/* Content blocks */
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+.intro blockquote{margin:0;font-family:var(--serif);font-size:clamp(1.5rem,3vw,2rem);line-height:1.3;color:var(--forest);border-left:4px solid var(--slate);padding-left:1.25rem}
+@media (max-width:860px){.intro{grid-template-columns:1fr;gap:2rem}}
+
+.alt{background:var(--mist)}
+.table-scroll{overflow-x:auto;margin-top:1.5rem;border:1px solid var(--line);border-radius:14px;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{text-align:left;padding:1rem 1.2rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;color:var(--forest);background:var(--alabaster)}
+tr:last-child td{border-bottom:0}
+
+.steps{list-style:none;counter-reset:s;margin:2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem}
+.steps li{counter-increment:s;background:#fff;border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.2rem}
+.steps li::before{content:counter(s);display:block;font-family:var(--serif);font-size:2rem;color:var(--slate);line-height:1}
+.steps b{display:block;color:var(--forest)}
+.steps span{font-size:.92rem}
+
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem;margin-top:2rem}
+.cols h3{border-top:3px solid var(--forest);padding-top:1rem}
+.cols p{font-size:.98rem}
+
+.braille{font-size:2.2rem;letter-spacing:.2em;color:var(--slate);margin:0 0 .5rem;user-select:none}
+
+.price{background:var(--forest);color:var(--alabaster)}
+.price h2,.price h3{color:var(--alabaster)}
+.price p{color:#d5e0da}
+.price .grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.big{font-family:var(--serif);font-size:clamp(4rem,10vw,7rem);line-height:1;color:#fff;margin:0}
+.price ul{padding-left:1.1rem;margin:0}
+.price li{margin-bottom:.5rem;color:#d5e0da}
+@media (max-width:860px){.price .grid{grid-template-columns:1fr}}
+
+.honest{border:2px solid var(--slate);border-radius:16px;padding:1.5rem 1.75rem;background:#fff;margin-top:2rem}
+.honest h3{font-size:1.3rem}
+.honest p{margin:0;font-size:.98rem}
+
+form{display:grid;gap:1rem;max-width:520px;margin-top:1.5rem}
+label{font-weight:700;font-size:.92rem;color:var(--forest)}
+input,select,textarea{width:100%;font:inherit;padding:.8rem 1rem;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--charcoal);margin-top:.3rem}
+input:focus,select:focus,textarea:focus{border-color:var(--slate);outline:none;box-shadow:0 0 0 3px rgba(74,96,122,.25)}
+form button{font:inherit;font-weight:700;background:var(--forest);color:#fff;border:0;border-radius:10px;padding:.9rem 1.4rem;cursor:pointer;justify-self:start}
+form button:hover{background:var(--charcoal)}
+
+footer{background:var(--charcoal);color:#cbd2da;padding:2.5rem 0;font-size:.92rem}
+footer .wrap{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}
+footer a{color:#fff}
+footer p{margin:0;max-width:none}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Ivory home">
+      <!-- Replace this inline mark with your logo file: <img src="logo.png" alt="Ivory" height="38"> -->
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <g fill="#0F2E23"><rect x="29" y="34" width="6" height="22" rx="1"/><path d="M32 36 L18 24 M32 40 L46 28 M32 30 L32 14" stroke="#0F2E23" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="18" cy="22" r="7"/><circle cx="32" cy="12" r="8"/><circle cx="44" cy="22" r="6"/></g>
+        <g fill="#4A607A"><rect x="50" y="12" width="4" height="4"/><rect x="56" y="18" width="3" height="3"/><rect x="53" y="25" width="3" height="3"/><rect x="59" y="9" width="2.5" height="2.5"/></g>
+      </svg>
+      Ivory
+    </a>
+    <button class="toggle" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span><span></span></button>
+    <nav aria-label="Main">
+      <ul class="menu" id="menu">
+        <li><a href="#about">About</a></li>
+        <li><a href="#tastebud">TasteBud</a></li>
+        <li><a href="#accessibility">Accessibility</a></li>
+        <li><a href="#who">Who it's for</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a class="cta" href="#contact">Get in touch</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div id="top"></div>
+
+<section class="hero">
+  <div class="wrap grid">
+    <div>
+      <h1>Know if your food is fresh, in seconds.</h1>
+      <p>TasteBud is a pocket-sized freshness assessment tool. It detects the gases food gives off as it spoils, then tells you the result by display, voice and touch.</p>
+      <div class="btns">
+        <a class="btn primary" href="#tastebud">See how it works</a>
+        <a class="btn ghost" href="#contact">Join the waiting list</a>
+      </div>
+    </div>
+
+    <div class="reader" aria-labelledby="reader-title">
+      <h2 id="reader-title">Try the four TasteBud results</h2>
+      <div class="states" role="group" aria-label="Choose a result to preview">
+        <button type="button" data-i="0" aria-pressed="true">Fresh</button>
+        <button type="button" data-i="1" aria-pressed="false">Consume soon</button>
+        <button type="button" data-i="2" aria-pressed="false">Spoilage detected</button>
+        <button type="button" data-i="3" aria-pressed="false">Discard</button>
+      </div>
+      <div class="readout" aria-live="polite">
+        <div class="icon" id="r-icon"></div>
+        <div>
+          <strong id="r-title"></strong>
+          <p id="r-text"></p>
+          <button class="hear" type="button" id="hear">Hear this result</button>
+        </div>
+      </div>
+      <p class="note">Preview only. Every result has its own icon shape, spoken message and sound, so it never depends on colour or smell.</p>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap intro">
+    <div>
+      <h2>Food waste and food poisoning start with guesswork.</h2>
+      <p>People judge food by how it looks, how it smells and the date on the pack. None of these is reliable, and some people cannot use them at all.</p>
+      <p>Ivory replaces guesswork with measurement. We build affordable, accessible technology that helps households and institutions waste less and eat safely.</p>
+    </div>
+    <blockquote>
+      A world where food is never wasted and every meal is safe.
+      <p style="font-family:var(--sans);font-size:.95rem;color:var(--charcoal);margin:.8rem 0 0">Our vision at Ivory</p>
+    </blockquote>
+  </div>
+</section>
+
+<section id="tastebud" class="alt">
+  <div class="wrap">
+    <h2>TasteBud</h2>
+    <p>A handheld device with a sensor array that detects volatile organic compounds, ammonia, sulfur compounds and biogenic amines released as food breaks down. It gives a result within seconds.</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">Result</th><th scope="col">What it means</th><th scope="col">What to do</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Fresh</th><td>Prime quality and safe.</td><td>Eat now or plan your meals.</td></tr>
+          <tr><th scope="row">Consume soon</th><td>Early signs of ageing. Still safe.</td><td>Cook it first.</td></tr>
+          <tr><th scope="row">Spoilage detected</th><td>Microbial breakdown has passed the safe threshold.</td><td>Do not eat. Discard safely.</td></tr>
+          <tr><th scope="row">Discard</th><td>Severe decomposition or cross-contamination risk.</td><td>Isolate it straight away.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:3rem">What happens inside</h3>
+    <ol class="steps">
+      <li><b>Sense</b><span>The sensor array reads gases from the food.</span></li>
+      <li><b>Process</b><span>Raw readings become checked, usable values.</span></li>
+      <li><b>Decide</b><span>Fixed, rule-based thresholds set the result.</span></li>
+      <li><b>Connect</b><span>The result is sent to the app over Bluetooth Low Energy.</span></li>
+      <li><b>Tell you</b><span>Display, voice and sound all give the same answer.</span></li>
+    </ol>
+
+    <div class="honest">
+      <h3>Built to fail safe</h3>
+      <p>A dropped connection, a sensor fault or an invalid reading is never shown as safe food. TasteBud shows an error instead. It is a Food Freshness Assessment Tool, not a guarantee of food safety, and temperature, humidity and strong food aromas can affect readings.</p>
+    </div>
+
+    <div class="cols">
+      <div><h3>Companion app</h3><p>Scan barcodes and QR codes for storage and handling guidance, and track what is in your fridge.</p></div>
+      <div><h3>Smart shelf-life tracking</h3><p>See how much food and money you save over time.</p></div>
+      <div><h3>Privacy first</h3><p>Transparent calibration data, clear consent, and no invasive monitoring.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="accessibility">
+  <div class="wrap">
+    <p class="braille" aria-hidden="true">⠊⠧⠕⠗⠽</p>
+    <h2>Designed for everyone from the start</h2>
+    <p>Accessibility is core to TasteBud, not an add-on. Anyone who cannot rely on sight or smell can still get a confident answer.</p>
+    <div class="cols">
+      <div><h3>Braille and tactile controls</h3><p>Embossed control surfaces, inspired by medicine packaging, for blind and low-vision users.</p></div>
+      <div><h3>Voice and sound</h3><p>Spoken guidance plus a distinct sound for every result.</p></div>
+      <div><h3>Multi-sense feedback</h3><p>Built for people with anosmia, post-viral smell loss or colour blindness, so no single sense is required.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="who" class="alt">
+  <div class="wrap">
+    <h2>Who TasteBud is for</h2>
+    <div class="cols">
+      <div><h3>Households</h3><p>Adults managing a food budget who want to cut waste and grocery costs.</p></div>
+      <div><h3>Older adults and people with sensory impairments</h3><p>A dependable daily living aid that does not rely on smell or sight.</p></div>
+      <div><h3>Care homes, hospitals, nurseries and kitchens</h3><p>Extra control over cross-contamination where it matters most.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="price">
+  <div class="wrap grid">
+    <div>
+      <h2>Lab-grade sensing at a fair price</h2>
+      <p>Industrial ATP monitors cost £200 to £300 or more. TasteBud brings measured freshness checks to every kitchen.</p>
+    </div>
+    <div>
+      <p class="big">£99.99</p>
+      <ul>
+        <li>Consumer retail price</li>
+        <li>10-year service and warranty</li>
+        <li>Calibration support and accessible digital manuals</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <h2>Get in touch</h2>
+    <p>Want updates, a demo or a partnership conversation? Tell us a little about you.</p>
+    <!-- Create a free form at formspree.io and replace YOUR_FORM_ID below. -->
+    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <div><label for="name">Name</label><input id="name" name="name" autocomplete="name" required></div>
+      <div><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+      <div><label for="role">I am a</label>
+        <select id="role" name="role">
+          <option>Home user</option><option>Care or health organisation</option><option>Commercial kitchen</option><option>Investor or partner</option><option>Other</option>
+        </select></div>
+      <div><label for="msg">Message</label><textarea id="msg" name="message" rows="4"></textarea></div>
+      <button type="submit">Send message</button>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong style="color:#fff">Ivory</strong><br>Consumer HealthTech and food safety technology.</p>
+    <p>TasteBud is a Food Freshness Assessment Tool.<br>&copy; <span id="yr">2026</span> Ivory. <a href="#top">Back to top</a></p>
+  </div>
+</footer>
+
+<script>
+/* Mobile menu */
+const toggle=document.querySelector('.toggle'),menu=document.getElementById('menu');
+toggle.addEventListener('click',()=>{
+  const open=menu.classList.toggle('open');
+  toggle.setAttribute('aria-expanded',open);
+  toggle.setAttribute('aria-label',open?'Close menu':'Open menu');
+});
+menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');
+}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('open')){menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.focus();}});
+
+/* Highlight current section in the nav */
+const links=[...menu.querySelectorAll('a:not(.cta)')];
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.removeAttribute('aria-current'));
+    const l=links.find(x=>x.getAttribute('href')==='#'+e.target.id);if(l)l.setAttribute('aria-current','true');}});
+},{rootMargin:'-45% 0px -50% 0px'});
+links.forEach(l=>{const s=document.querySelector(l.getAttribute('href'));if(s)io.observe(s);});
+
+/* Result preview: each state has a different icon SHAPE, not just a colour */
+const C='#0F2E23',S='#4A607A';
+const states=[
+ {t:'Fresh',d:'Prime quality and safe. Ideal to eat now or plan for later.',
+  i:`<svg viewBox="0 0 36 36" fill="none" stroke="${C}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19l8 8 14-16"/></svg>`},
+ {t:'Consume soon',d:'Early signs of ageing. Still safe, so use it first.',
+  i:`<svg viewBox="0 0 36 36" fill="none" stroke="${S}" stroke-width="4" stroke-linecap="round"><circle cx="18" cy="18" r="13"/><path d="M18 10v8l5 3"/></svg>`},
+ {t:'Spoilage detected',d:'Unsafe to eat. Discard it safely.',
+  i:`<svg viewBox="0 0 36 36" fill="none" stroke="${S}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M18 5L33 31H3z"/><path d="M18 14v8M18 26v.5"/></svg>`},
+ {t:'Discard',d:'Severe decomposition or contamination risk. Isolate it now.',
+  i:`<svg viewBox="0 0 36 36" fill="none" stroke="#1F2937" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="26" height="26" rx="4"/><path d="M12 12l12 12M24 12L12 24"/></svg>`}
+];
+const btns=document.querySelectorAll('.states button');
+let cur=0;
+function show(n){
+  cur=n;const s=states[n];
+  document.getElementById('r-icon').innerHTML=s.i;
+  document.getElementById('r-title').textContent=s.t;
+  document.getElementById('r-text').textContent=s.d;
+  btns.forEach((b,i)=>b.setAttribute('aria-pressed',i===n));
+}
+btns.forEach(b=>b.addEventListener('click',()=>show(+b.dataset.i)));
+document.getElementById('hear').addEventListener('click',()=>{
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(states[cur].t+'. '+states[cur].d));
+});
+show(0);
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
